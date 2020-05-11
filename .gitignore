@@ -1,0 +1,12 @@
+node_modules
+.vscode
+.idea/
+
+build
+dist
+
+temp/*
+!temp/.gitkeep
+
+*.env
+*.log
