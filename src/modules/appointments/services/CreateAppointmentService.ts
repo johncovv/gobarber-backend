@@ -1,28 +1,30 @@
 import { startOfHour } from 'date-fns';
-import { getCustomRepository } from 'typeorm';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 import Appointment from '../infra/typeorm/entities/Appointment';
-import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
-interface RequestDTO {
+interface IRequestDTO {
 	date: Date;
 	provider_id: string;
 }
 
+@injectable()
 class CreateAppointmentService {
-	// execution method with a return of type Promise
-	// unstructured parameters of the RequestDTO interface
+	constructor(
+		@inject('AppointmentsRepository')
+		private appointmentsRepository: IAppointmentsRepository,
+	) {}
+
 	public async execute({
 		date,
 		provider_id,
-	}: RequestDTO): Promise<Appointment> {
-		const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
+	}: IRequestDTO): Promise<Appointment> {
 		const appointmentDate = startOfHour(date);
 
 		// search if there is an appointment with the same date using the repository method
-		const findAppointmentInSameDate = await appointmentsRepository.findByDate(
+		const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(
 			appointmentDate,
 		);
 
@@ -32,12 +34,10 @@ class CreateAppointmentService {
 		}
 
 		// if not, use the repository's create method to create a new appointment
-		const appointment = appointmentsRepository.create({
+		const appointment = await this.appointmentsRepository.create({
 			provider_id,
 			date: appointmentDate,
 		});
-
-		await appointmentsRepository.save(appointment);
 
 		return appointment;
 	}
