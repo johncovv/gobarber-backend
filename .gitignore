@@ -1,12 +1,18 @@
-node_modules
-.vscode
+# development
+node_modules/
+.vscode/
 .idea/
+.jest/
+coverage/
 
-build
-dist
+# build
+build/
+dist/
 
+# assets
 temp/*
 !temp/.gitkeep
 
+# log, enviroments
 *.env
 *.log
