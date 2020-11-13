@@ -12,6 +12,7 @@ dist/
 # assets
 temp/*
 !temp/.gitkeep
+!temp/uploads/
 
 # log, enviroments
 *.env
